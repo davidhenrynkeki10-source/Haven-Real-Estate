@@ -989,6 +989,11 @@
 ========================= */
 
 @media (max-width: 768px) {
+    .completed-project .project-overlay{
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
     .hero-content{
     padding:40px 20px;
     text-align:center;
