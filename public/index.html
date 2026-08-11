@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haven — Elite Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14161b;
+    --ink-soft:#1c1f26;
+    --cream:#f6f3ee;
+    --coral:#000000;
+    --coral-deep:#b85a39;
+    --gold:#c9a24b;
+    --text-dim:#9a9da6;
+    --line:rgba(255,255,255,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;overflow-x:hidden;}
+  h1,h2,h3,.logo,.serif{font-family:'Fraunces',serif;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;width:100%;height:100%;object-fit:cover;}
+  .container{max-width:1240px;margin:0 auto;padding:0 28px;}
+  .eyebrow{font-size:12.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);font-weight:600;}
+  button{font-family:inherit;}
+
+  /* ============ HERO SLIDER ============ */
+  .hero-slider{position:relative;height:100vh;min-height:640px;max-height:820px;overflow:hidden;background:var(--cream);}
+  .slide{
+    position:absolute;inset:0;display:grid;grid-template-columns:0.85fr 1.15fr;
+    opacity:0;visibility:hidden;transition:opacity 1s ease;
+  }
+  .slide.active{opacity:1;visibility:visible;z-index:2;}
+
+  .slide-left{background:var(--cream);color:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:70px;position:relative;}
+  .mini-nav{position:absolute;top:36px;left:70px;right:40px;display:flex;align-items:center;gap:28px;font-size:13px;color:#666;}
+  .mini-nav .rule{width:26px;height:1px;background:#666;}
+  .mini-nav a:hover{color:var(--ink);}
+  .mini-nav .search{margin-left:auto;font-size:15px;}
+
+  .slide-left h1{
+    font-size:clamp(34px,4.6vw,58px);font-weight:500;line-height:1.06;letter-spacing:-0.01em;
+    overflow:hidden;
+  }
+  .slide-left h1 span{display:block;overflow:hidden;}
+  .slide-left h1 span em{
+    display:block;font-style:normal;
+    transform:translateY(110%);transition:transform .9s cubic-bezier(.22,1,.36,1);
+  }
+  .slide.active .slide-left h1 span:nth-child(1) em{transition-delay:.35s;transform:translateY(0);}
+  .slide.active .slide-left h1 span:nth-child(2) em{transition-delay:.48s;transform:translateY(0);}
+
+  .slide-left p{
+    color:#6b6b6b;font-size:15px;max-width:320px;margin-top:20px;
+    opacity:0;transform:translateY(14px);transition:opacity .7s ease, transform .7s ease;transition-delay:.65s;
+  }
+  .slide.active .slide-left p{opacity:1;transform:none;}
+
+  .slide-right{position:relative;overflow:hidden;}
+  .slide-right img{
+    transform:scale(1.14);transition:transform 6.5s linear;
+  }
+  .slide.active .slide-right img{transform:scale(1);}
+
+  .slide-counter{
+    position:absolute;top:40px;right:36px;color:#fff;font-family:'Fraunces',serif;font-size:13px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;text-shadow:0 1px 6px rgba(0,0,0,0.4);
+  }
+  .slide-counter .track{width:1px;height:34px;background:rgba(255,255,255,0.4);position:relative;}
+  .slide-counter .track::after{content:"";position:absolute;top:0;left:-2px;width:5px;height:5px;border-radius:50%;background:var(--coral);transition:top .5s ease;}
+
+  .slide-strip{position:absolute;bottom:0;left:0;right:0;display:flex;z-index:3;}
+  .slide-strip .info{flex:1;padding:24px 32px;background:var(--coral);color:#fff;transition:background .5s ease;}
+  .slide-strip .info h3{font-size:19px;font-weight:500;margin-bottom:4px;}
+  .slide-strip .info a{font-size:12.5px;font-weight:600;opacity:0.9;}
+  .slide-strip .price{padding:24px 32px;background:var(--ink);color:#fff;text-align:right;min-width:200px;}
+  .slide-strip .price .tag{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:#9a9da6;}
+  .slide-strip .price .amt{font-family:'Fraunces',serif;font-size:19px;color:var(--gold);}
+
+  .slider-arrows{position:absolute;bottom:110px;right:36px;display:flex;gap:8px;z-index:4;}
+  .slider-arrows button{
+    width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.5);background:rgba(0,0,0,0.15);
+    color:#fff;cursor:pointer;font-size:15px;transition:all .2s;
+  }
+  .slider-arrows button:hover{background:var(--coral);border-color:var(--coral);}
+
+  @media (max-width:900px){
+    .slide{grid-template-columns:1fr;}
+    .slide-left{padding:110px 26px 30px;order:2;}
+    .slide-right{order:1;height:44vh;}
+    .mini-nav{left:26px;right:26px;}
+    .slide-strip{position:static;}
+    .hero-slider{height:auto;max-height:none;}
+  }
+
+  /* ============ NAV (sticky, appears after hero) ============ */
+  header{position:sticky;top:0;z-index:60;background:rgba(20,22,27,0.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);color:var(--cream);}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;max-width:1240px;margin:0 auto;}
+  .logo{font-size:20px;font-weight:600;display:flex;align-items:center;gap:8px;}
+  .logo::before{content:"";width:9px;height:9px;background:var(--coral);border-radius:2px;display:inline-block;transform:rotate(45deg);}
+  .nav-links{display:flex;gap:34px;font-size:14px;color:#c7c9cf;}
+  .nav-links a:hover{color:var(--cream);}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:2px;font-size:13px;font-weight:600;letter-spacing:0.03em;cursor:pointer;border:none;transition:all .25s;}
+  .btn-coral{background:var(--coral);color:#fff;}
+  .btn-coral:hover{background:var(--coral-deep);}
+
+  /* ============ everything below uses dark theme ============ */
+  .dark-section{background:var(--ink);color:var(--cream);}
+  .stats{padding:56px 28px;border-bottom:1px solid var(--line);}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:20px;}
+  .stats-grid .num{font-family:'Fraunces',serif;font-size:32px;color: #ffffff;}
+  .stats-grid .label{font-size:12.5px;color:#9a9da6;margin-top:4px;}
+  @media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+
+  .listings{padding:110px 28px;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;flex-wrap:wrap;gap:20px;}
+  .section-head h2{font-size:clamp(28px,3.4vw,40px);font-weight:500;margin-top:10px;}
+  .tabs{display:flex;gap:6px;background:var(--ink-soft);padding:5px;border-radius:3px;border:1px solid var(--line);}
+  .tab{padding:9px 18px;font-size:13px;border-radius:2px;cursor:pointer;color:#9a9da6;transition:all .2s;}
+  .tab.active{background:var(--coral);color:#fff;}
+
+  .property-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  .property-card{border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--ink-soft);transition:transform .4s cubic-bezier(.22,1,.36,1), border-color .3s;}
+  .property-card:hover{transform:translateY(-6px);border-color:rgba(226,96,63,0.5);}
+  .property-image{position:relative;aspect-ratio:4/3;overflow:hidden;}
+  .property-image img{transition:transform .6s ease;}
+  .property-card:hover .property-image img{transform:scale(1.08);}
+  .property-tag{position:absolute;top:14px;left:14px;background:var(--coral);color:#fff;font-size:11px;font-weight:600;letter-spacing:0.04em;padding:6px 12px;text-transform:uppercase;}
+  .property-fav{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(20,22,27,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .property-strip{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);}
+  .property-strip .amt{font-family:'Fraunces',serif;font-size:19px;color:var(--gold);}
+  .property-strip .type{font-size:11px;color:#9a9da6;text-transform:uppercase;letter-spacing:0.05em;}
+  .property-body{padding:18px;}
+  .property-body h3{font-size:17px;font-weight:500;margin-bottom:6px;}
+  .property-body .loc{font-size:13px;color:#9a9da6;margin-bottom:14px;}
+  .specs{display:flex;gap:16px;font-size:12.5px;color:#c7c9cf;border-top:1px solid var(--line);padding-top:14px;}
+  @media(max-width:900px){.property-grid{grid-template-columns:1fr;}}
+
+  .neighborhoods{padding:100px 28px;background:var(--cream);color:var(--ink);}
+  .neighborhoods .eyebrow{color:var(--coral-deep);}
+  .neighborhoods .section-head h2{color:var(--ink);}
+  .hood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .hood-card{position:relative;aspect-ratio:3/4;border-radius:4px;overflow:hidden;}
+  .hood-card img{filter:brightness(0.75);transition:transform .5s ease;}
+  .hood-card:hover img{transform:scale(1.08);}
+  .hood-card .label{position:absolute;bottom:0;left:0;right:0;padding:18px;color:#fff;}
+  .hood-card .label .n{font-family:'Fraunces',serif;font-size:18px;}
+  .hood-card .label .c{font-size:12px;opacity:0.8;}
+  @media(max-width:900px){.hood-grid{grid-template-columns:repeat(2,1fr);}}
+
+  .why{padding:110px 28px;}
+  .why-layout{display:grid;grid-template-columns:0.85fr 1.15fr;gap:50px;align-items:center;}
+  .why-photo{border-radius:6px;overflow:hidden;aspect-ratio:3/4;}
+  .why-photo img{transition:transform .6s ease;}
+  .why-photo:hover img{transform:scale(1.05);}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .why-grid-stacked{grid-template-columns:1fr;gap:16px;}
+  .why-card{padding:26px 28px;border:1px solid var(--line);border-radius:4px;transition:transform .3s ease, border-color .3s;display:flex;align-items:flex-start;gap:20px;}
+  .why-card:hover{transform:translateX(6px);border-color:rgba(226,96,63,0.4);}
+  .why-card .num{font-family:'Fraunces',serif;color:var(--coral);font-size:14px;flex-shrink:0;}
+  .why-card h3{font-size:17px;font-weight:500;margin-bottom:6px;}
+  .why-card p{font-size:14px;color:#9a9da6;}
+  @media(max-width:900px){.why-layout{grid-template-columns:1fr;}.why-photo{aspect-ratio:16/9;}}
+
+  .agents{padding:100px 28px;border-top:1px solid var(--line);}
+  .agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  .agent-card{text-align:center;}
+  .agent-photo{border-radius:6px;overflow:hidden;aspect-ratio:4/5;margin-bottom:18px;}
+  .agent-photo img{transition:transform .5s ease;}
+  .agent-card:hover .agent-photo img{transform:scale(1.06);}
+  .agent-card h3{font-size:17px;font-weight:500;margin-bottom:4px;}
+  .agent-card .role{font-size:13px;color:var(--coral);margin-bottom:2px;}
+  .agent-card .area{font-size:12.5px;color:#9a9da6;}
+  @media(max-width:900px){.agent-grid{grid-template-columns:1fr;max-width:340px;margin:0 auto;}}
+
+  .testimonial{padding:100px 28px;}
+  .testimonial-layout{display:grid;grid-template-columns:0.6fr 1fr;gap:50px;align-items:center;}
+  .quote-photo{border-radius:6px;overflow:hidden;aspect-ratio:1/1;}
+  .quote{max-width:520px;}
+  .quote p{font-family:'Fraunces',serif;font-size:24px;line-height:1.5;margin-bottom:26px;font-style:italic;}
+  .quote .person{font-size:13.5px;color:#9a9da6;}
+  .quote .person b{color:var(--cream);font-weight:600;}
+  @media(max-width:900px){.testimonial-layout{grid-template-columns:1fr;text-align:center;}.quote{max-width:100%;margin:0 auto;}.quote-photo{max-width:320px;margin:0 auto;}}
+
+  .cta{padding:100px 28px;position:relative;}
+  .cta-bg{position:absolute;inset:0;z-index:0;}
+  .cta-bg img{opacity:0.16;}
+  .cta-inner{position:relative;z-index:1;max-width:960px;margin:0 auto;border-radius:6px;padding:70px 50px;text-align:center;background:linear-gradient(135deg, rgba(226,96,63,0.92), rgba(184,90,57,0.92));}
+  .cta-inner h2{font-size:clamp(26px,3.6vw,38px);font-weight:500;margin-bottom:16px;color:#fff;}
+  .cta-inner p{color:rgba(255,255,255,0.85);margin-bottom:30px;}
+  .btn-dark{background:var(--ink);color:#fff;}
+
+  footer{padding:60px 28px 30px;border-top:1px solid var(--line);}
+  .footer-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:30px;max-width:1240px;margin:0 auto 46px;}
+  .footer-brand p{color:#9a9da6;font-size:13.5px;margin-top:14px;max-width:240px;}
+  .footer-col h4{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#83858c;margin-bottom:16px;}
+  .footer-col a{display:block;font-size:14px;color:#c7c9cf;margin-bottom:10px;}
+  .footer-col a:hover{color:var(--cream);}
+  .footer-bottom{max-width:1240px;margin:0 auto;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:12.5px;color:#83858c;flex-wrap:wrap;gap:10px;}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+  .reveal.in{opacity:1;transform:none;}
+  .stagger.in > *{transition-delay:calc(var(--i,0) * 90ms);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:0.01ms !important; animation-duration:0.01ms !important;}
+  }
+  #listingSearch {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#listingSearch::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#listingSearch:focus {
+    border-color: #c9a24b; /* matches your site's gold theme */
+    background: rgba(255, 255, 255, 0.08);
+}
+</style>
+</head>
+<body>
+
+<section class="hero-slider" id="heroSlider">
+
+  <div class="slide active" data-strip="#e2603f">
+    <div class="slide-left">
+      <div class="mini-nav"><span class="rule"></span><a href="#listings">All Apartments</a><a href="#why">About</a><a href="#contact">Contact</a></div>
+      <h1><span><em>Buy an elite</em></span><span><em>Real Estate</em></span></h1>
+      <p>A right media mix can make the difference — browse our current collection.</p>
+    </div>
+    <div class="slide-right">
+      <img data-ph="Buy an elite Real Estate" data-hue="16" alt="Modern estate" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop">
+      <div class="slide-counter">01<div class="track"></div>03</div>
+    </div>
+    <div class="slide-strip">
+      <div class="info"><h3>Lagonia Apartment</h3><a href="#listings">View the estate →</a></div>
+      <div class="price"><span class="tag">Special price</span><br><span class="amt">$998,500</span></div>
+    </div>
+  </div>
+
+  <div class="slide" data-strip="#c98a3a">
+    <div class="slide-left">
+      <div class="mini-nav"><span class="rule"></span><a href="#listings">All Apartments</a><a href="#why">About</a><a href="#contact">Contact</a></div>
+      <h1><span><em>Sleek House</em></span><span><em>Side Style</em></span></h1>
+      <p>Clean lines and open living — designed for the way you actually live.</p>
+    </div>
+    <div class="slide-right">
+      <img data-ph="Sleek House Side Style" data-hue="30" alt="Sleek villa" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1600&auto=format&fit=crop">
+      <div class="slide-counter">02<div class="track"></div>03</div>
+    </div>
+    <div class="slide-strip">
+      <div class="info"><h3>Glass Blue House</h3><a href="#listings">View the estate →</a></div>
+      <div class="price"><span class="tag">Special price</span><br><span class="amt">$657,000</span></div>
+    </div>
+  </div>
+
+  <div class="slide" data-strip="#4a7a6e">
+    <div class="slide-left">
+      <div class="mini-nav"><span class="rule"></span><a href="#listings">All Apartments</a><a href="#why">About</a><a href="#contact">Contact</a></div>
+      <h1><span><em>Coastal Calm</em></span><span><em>Living</em></span></h1>
+      <p>Wake up to the water — private beach access on every listing in this set.</p>
+    </div>
+    <div class="slide-right">
+      <img data-ph="Coastal Calm Living" data-hue="170" alt="Coastal home" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1600&auto=format&fit=crop">
+      <div class="slide-counter">03<div class="track"></div>03</div>
+    </div>
+    <div class="slide-strip">
+      <div class="info"><h3>Banana Grove Estate</h3><a href="#listings">View the estate →</a></div>
+      <div class="price"><span class="tag">Special price</span><br><span class="amt">$1,240,000</span></div>
+    </div>
+  </div>
+
+  <div class="slider-arrows">
+    <button id="prevSlide">←</button>
+    <button id="nextSlide">→</button>
+  </div>
+</section>
+
+<header>
+  <nav>
+    <div class="logo">Kelegs Prime Estate</div>
+    <div class="nav-links">
+      <a href="#listings">Buy</a><a href="#listings">Rent</a><a href="#neighborhoods">Neighborhoods</a><a href="#why">Why Haven</a><a href="#agents">Agents</a>
+    </div>
+    <a href="#" class="btn btn-coral">List your property</a>
+  </nav>
+</header>
+
+<section class="dark-section stats">
+  <div class="container stats-grid">
+    <div class="reveal"><div class="num">1,240+</div><div class="label">Properties sold</div></div>
+    <div class="reveal"><div class="num">18</div><div class="label">Cities covered</div></div>
+    <div class="reveal"><div class="num">14 days</div><div class="label">Avg. time to close</div></div>
+    <div class="reveal"><div class="num">4.9/5</div><div class="label">Client rating</div></div>
+  </div>
+</section>
+
+<section class="dark-section listings" id="listings">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="eyebrow">Listings</div><h2>Featured properties</h2></div>
+      <input type="text" id="listingSearch" placeholder="Search by location or property type…">
+      <div class="tabs">
+  <div class="tab active" data-filter="all">All</div>
+  <div class="tab" data-filter="For Sale">Buy</div>
+  <div class="tab" data-filter="For Rent">Rent</div>
+  <div class="tab" data-filter="New Build">New builds</div>
+</div>
+    </div>
+    <div class="property-grid stagger" id="propertyGrid"></div>
+    <div id="noResults" style="display:none; text-align:center; padding:60px 20px;">
+
+    <div style="font-size:70px;">🏡</div>
+
+    <h2>No Properties Found</h2>
+
+    <p style="color:#999; margin-bottom:25px;">
+        We couldn't find any properties matching your search.
+    </p>
+    <p>Try searching another location or property type.</p>
+
+    <button id="clearSearchBtn" class="btn btn-gold">
+        Clear Search
+    </button>
+
+</div>
+
+    
+  </div>
+</section>
+
+<section class="neighborhoods" id="neighborhoods">
+  <div class="container">
+    <div class="section-head reveal"><div><div class="eyebrow">Explore</div><h2>Browse by neighborhood</h2></div></div>
+    <div class="hood-grid stagger" id="hoodGrid"></div>
+  </div>
+</section>
+
+<section class="dark-section why" id="why">
+  <div class="container why-layout">
+    <div class="why-photo reveal">
+      <img data-ph="Haven Handover" data-hue="16" alt="Haven agent handing over keys">
+    </div>
+    <div class="why-content">
+      <div class="section-head reveal" style="margin-bottom:30px;"><div><div class="eyebrow">Why Haven</div><h2>Buying should feel this calm</h2></div></div>
+      <div class="why-grid why-grid-stacked">
+        <div class="why-card reveal"><div class="num">01</div><h3>Verified listings only</h3><p>Every property is inspected and title-checked before it goes live.</p></div>
+        <div class="why-card reveal"><div class="num">02</div><h3>A dedicated agent</h3><p>One point of contact from first viewing to final signature.</p></div>
+        <div class="why-card reveal"><div class="num">03</div><h3>Transparent pricing</h3><p>No hidden fees added after you've fallen in love with a place.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="services-section">
+
+    <div class="services-header">
+
+        <p class="section-tag">OUR SERVICES</p>
+
+        <h2>Everything you need under one roof</h2>
+
+        <p class="services-text">
+            We don't just sell properties. We design, build, renovate,
+            manage and transform them.
+        </p>
+
+        <button id="toggleServices" class="services-btn">
+            Explore Our Services
+        </button>
+
+    </div>
+
+    <div id="servicesContent" class="services-content">
+
+        <div class="service-card">
+            <div class="service-icon">🏠</div>
+            <h3>Property Sales</h3>
+            <p>Residential, commercial and investment properties.</p>
+            <a href="#" class="learn-more" data-service="property-sales">
+              Learn More →
+          
+            </a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🏗️</div>
+            <h3>Construction</h3>
+            <p>Luxury residential and commercial construction.</p>
+            <a href="#" class="learn-more" data-service="construction">
+              Learn More →
+            </a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🎨</div>
+            <h3>Interior Design</h3>
+            <p>Elegant interior finishing and furnishing.</p>
+            <a href="#" class="learn-more" data-service="interior-design">
+              Learn More →
+            </a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🏊</div>
+            <h3>Swimming Pools</h3>
+            <p>Modern pool design and installation.</p>
+            <a href="#" class="learn-more" data-service="swimming-pool">
+              Learn More →
+            </a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🛠️</div>
+            <h3>Renovation</h3>
+            <p>Home and office remodeling services.</p>
+            <a href="#" class="learn-more" data-service="renovation">
+              Learn More →
+            </a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🏢</div>
+            <h3>Property Management</h3>
+            <p>Professional management of residential and commercial properties.</p>
+            <a href="#" class="learn-more" data-service="property-management">
+              Learn More →
+            </a>
+        </div>
+
+    </div>
+
+</section>
+<div id="serviceModal" class="service-modal">
+    <div class="service-modal-content">
+      <button class="service-modal-close" id="closeServiceModal">&times;</button>
+      <img id="serviceModalImage" src="" alt="Service">
+      <div class="service-modal-body">
+          <h2 id="serviceModalTitle"></h2>
+          <p id="serviceModalDescription"></p>
+          <h3>What We Offer</h3>
+          <ul id="serviceModalList"></ul>
+          <a id="serviceWhatsapp" href="https://wa.me/2349031468437" target="_blank" class="service-quote-btn">
+              Get a Quote on WhatsApp
+          </a>
+      </div>
+    </div> 
+</div>
+<section class="projects-section" id="projects">
+
+    <div class="projects-header">
+
+        <p class="section-tag">OUR PROJECTS</p>
+
+        <h2>Completed Projects</h2>
+
+        <p>
+            Discover some of our recently completed construction,
+            interior design, swimming pool and renovation projects.
+        </p>
+
+    </div>
+
+    <div class="project-grid">
+
+        <div class="project-card">
+          <img src="images/luxury-duplex.jpg" alt="Luxury Duplex">
+          
+          
+            
+
+          
+
+            
+
+             <div class="project-overlay">
+
+                <span class="project-category">
+                    Construction
+                </span>
+
+                <h3>Luxury Duplex</h3>
+
+                <p>📍 Lekki, Lagos</p>
+
+                <button class="project-btn" id="project1Btn">
+                    View Project →
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="project-card">
+
+            <img src="images/interior-design.jpg" alt="Interior Design">
+
+            <div class="project-overlay">
+
+                <span class="project-category">
+                    Interior Design
+                </span>
+
+                <h3>Modern Living Room</h3>
+
+                <p>📍 Abuja</p>
+
+                <button class="project-btn" id="project2Btn">
+                    View Project →
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="project-card">
+
+            <img src="images/swimming-pool.jpg" alt="Swimming Pool">
+
+            <div class="project-overlay">
+
+                <span class="project-category">
+                    Swimming Pool
+                </span>
+
+                <h3>Luxury Pool</h3>
+
+                <p>📍 Ikoyi</p>
+
+                <button class="project-btn" id="project3Btn">
+                    View Project →
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <div class="projects-button">
+    <a href="#" class="view-all-btn">
+        View All Projects →
+    </a>
+</div>
+<div class="project-modal" id="project1Modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+        <div class="gallery">
+
+    <img
+        id="mainImage"
+        src="images/luxury-duplex.jpg"
+        class="main-image"
+    >
+
+    <div class="thumbnails">
+
+        <img src="images/luxury-duplex.jpg" class="thumb active">
+
+        <img src="images/luxury-duplex.jpg" class="thumb">
+
+        <img src="images/luxury-duplex.jpg" class="thumb">
+
+        <img src="images/luxury-duplex.jpg" class="thumb">
+
+    </div>
+
+</div>
+
+        <h2>Luxury Duplex Construction</h2>
+
+        <p><strong>📍 Location:</strong> Lekki, Lagos</p>
+
+        <p><strong>Status:</strong> Completed</p>
+
+        <p>
+            This luxury duplex was designed and constructed with
+            premium finishes, spacious interiors and modern
+            architecture.
+        </p>
+
+        <ul>
+            <li>✔ 5 Bedrooms</li>
+            <li>✔ Swimming Pool</li>
+            <li>✔ Smart Home Features</li>
+            <li>✔ Parking Space</li>
+        </ul>
+
+        <button class="quote-btn">
+            Request Similar Project
+        </button>
+
+    </div>
+
+</div>
+<div class="project-modal" id="project2Modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+        <div class="gallery">
+
+    <img
+        id="mainImage"
+        src="images/interior-design.jpg"
+        class="main-image"
+    >
+
+    <div class="thumbnails">
+
+        <img src="images/interior-design.jpg" class="thumb active">
+
+        <img src="images/interior-design.jpg" class="thumb">
+
+        <img src="images/interior-design.jpg" class="thumb">
+
+        <img src="images/interior-design.jpg" class="thumb">
+
+    </div>
+
+</div>
+
+        <h2>Modern Interior Design</h2>
+
+        <p><strong>📍 Location:</strong> Abuja, Nigeria </p>
+
+        <p><strong>Status:</strong> Completed</p>
+
+        <p>
+            This luxury interior design project transformed the property into a modern, elegant living space. Every detail was carefully planned, from the lighting and ceiling designs to the custom furniture and premium finishes, creating a comfortable and sophisticated home.
+        </p>
+
+        <ul>
+            <li>✔ Premium Interior Finishes</li>
+            <li>✔ Custom Furniture Design</li>
+            <li>✔ Modern Ceiling & Lighting</li>
+            <li>✔ Luxury Kitchen Installation</li>
+            <li>✔ Space Planning & Decoration</li>
+        </ul>
+
+        <button class="quote-btn">
+            Request Similar Project
+        </button>
+
+    </div>
+
+</div>
+<div class="project-modal" id="project3Modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+        <div class="gallery">
+
+    <img
+        id="mainImage"
+        src="images/swimming-pool.jpg"
+        class="main-image"
+    >
+
+    <div class="thumbnails">
+
+        <img src="images/swimming-pool.jpg" class="thumb active">
+
+        <img src="images/swimming-pool.jpg" class="thumb">
+
+        <img src="images/swimming-pool.jpg" class="thumb">
+
+        <img src="images/swimming-pool.jpg" class="thumb">
+
+    </div>
+
+</div>
+
+        <h2>Luxury Swimming Pool</h2>
+
+        <p><strong>📍 Location:</strong> Ikoyi, Lagos</p>
+
+        <p><strong>Status:</strong> Completed</p>
+
+        <p>
+            This custom-built swimming pool was designed to complement the property's modern architecture while providing a luxurious outdoor experience. Built with premium materials and elegant finishes, it combines beauty, comfort, and long-lasting durability. This custom-built swimming pool was designed to complement the property's modern architecture while providing a luxurious outdoor experience. Built with premium materials and elegant finishes, it combines beauty, comfort, and long-lasting durability.
+        </p>
+
+        <ul>
+          <li>✔ Infinity Edge Design</li>
+          <li>✔ LED Underwater Lighting</li>
+          <li>✔ Waterfall Feature</li>
+          <li>✔ Premium Pool Finishing</li>
+          <li>✔ Outdoor Relaxation Area</li>
+        </ul>
+
+        <button class="quote-btn">
+            Request Similar Project
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+</section>
+
+<section class="dark-section agents" id="agents">
+  <div class="container">
+    <div class="section-head reveal"><div><div class="eyebrow">Our Team</div><h2>Meet your agents</h2></div></div>
+    <div class="agent-grid stagger" id="agentGrid"></div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+
+    <div class="testimonials-header">
+
+        <p class="section-tag">TESTIMONIALS</p>
+
+        <h2>What Our Clients Say</h2>
+
+        <p>
+            We are proud to have earned the trust of our clients through
+            quality workmanship, professionalism and exceptional service.
+        </p>
+
+    </div>
+
+    <div class="testimonial-grid">
+
+        <div class="testimonial-card">
+
+            <div class="stars">★★★★★</div>
+
+            <p>
+                KELEGSPrimeEstate exceeded our expectations. Their
+                professionalism and attention to detail made our dream
+                home a reality.
+            </p>
+
+            <h4>~ Mr. Adewale</h4>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <div class="stars">★★★★★</div>
+
+            <p>
+                The interior transformation was simply outstanding.
+                Every space was beautifully designed and completed on time.
+            </p>
+
+            <h4>~ Mrs. Okafor</h4>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <div class="stars">★★★★★</div>
+
+            <p>
+                Our swimming pool project was delivered with excellent
+                craftsmanship. We highly recommend their services.
+            </p>
+
+            <h4>~ The Johnson Family</h4>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="quote-section">
+
+    <div class="quote-container">
+
+        <div class="quote-text">
+
+            <p class="quote-tag">GET A FREE QUOTE</p>
+
+            <h2>Let's Build Your Dream Project</h2>
+
+            <p>
+                Whether you're looking to buy a property, build your dream
+                home, renovate your space, or construct a swimming pool,
+                our team is ready to help.
+            </p>
+
+        </div>
+
+        <form class="quote-form" id="quoteForm">
+
+            <input type="text" id="quoteName" placeholder="Full Name" required>
+
+            <input type="email" id="quoteEmail" placeholder="Email Address" required>
+
+            <input type="tel" id="quotePhone" placeholder="Phone Number" required>
+
+            <select id="quoteService" required>
+                <option value="">Select a Service</option>
+                <option>Property Purchase</option>
+                <option>Construction</option>
+                <option>Interior Design</option>
+                <option>Swimming Pool Construction</option>
+                <option>Renovation</option>
+            </select>
+
+            <textarea id="quoteMessage"
+                rows="5"
+                placeholder="Tell us about your project..."
+            ></textarea>
+
+            <button type="submit">
+                Request a Quote
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+<section class="contact-section" id="contact">
+
+    <div class="contact-header">
+
+        <p class="section-tag">CONTACT US</p>
+
+        <h2>Let's Talk About Your Next Project</h2>
+
+        <p>
+            We'd love to hear from you. Reach out to discuss your property,
+            construction, interior design, or swimming pool project.
+        </p>
+
+    </div>
+
+    <div class="contact-grid">
+
+        <div class="contact-card">
+
+            <h3>📍 Office Address</h3>
+            <p>123 Example Street, Lekki, Lagos, Nigeria</p>
+
+            <h3>📞 Phone</h3>
+            <p>+234 XXX XXX XXXX</p>
+
+            <h3>✉ Email</h3>
+            <p>info@kelegsprimeestate.com</p>
+
+            <h3>🕒 Office Hours</h3>
+            <p>Mon – Fri: 8:00 AM – 6:00 PM</p>
+
+        </div>
+
+        <div class="map-container">
+
+            <iframe
+                src="YOUR_GOOGLE_MAP_EMBED_LINK"
+                width="100%"
+                height="400"
+                style="border:0;"
+                loading="lazy"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </div>
+
+</section>
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-about">
+
+            <h2>KELEGSPrimeEstate</h2>
+
+            <p>
+                Delivering premium real estate, construction, interior
+                design and swimming pool solutions with excellence,
+                innovation and integrity.
+            </p>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h3>Quick Links</h3>
+
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#listings">Properties</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+
+        </div>
+
+        <div class="footer-services">
+
+            <h3>Our Services</h3>
+
+            <ul>
+                <li>Real Estate</li>
+                <li>Construction</li>
+                <li>Interior Design</li>
+                <li>Swimming Pools</li>
+                <li>Renovation</li>
+            </ul>
+
+        </div>
+
+        <div class="footer-contact">
+
+            <h3>Contact</h3>
+
+            <p>📍 Lagos, Nigeria</p>
+            <p>📞 +234 XXX XXX XXXX</p>
+            <p>✉ info@kelegsprimeestate.com</p>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 KELEGSPrimeEstate. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<script>
+  
+  /* ---------- Self-contained placeholder photos (no external network needed) ---------- */
+  function ph(label, w=800, h=600, hue=16){
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>
+      <defs>
+        <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+          <stop offset='0%' stop-color='hsl(${hue},40%,30%)'/>
+          <stop offset='100%' stop-color='hsl(${hue},30%,12%)'/>
+        </linearGradient>
+        <filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' result='noise'/><feColorMatrix in='noise' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.03 0'/></filter>
+      </defs>
+      <rect width='100%' height='100%' fill='url(#g)'/>
+      <rect width='100%' height='100%' filter='url(#n)'/>
+      <text x='50%' y='50%' font-family='Georgia,serif' font-size='${Math.max(14,Math.round(w/16))}' fill='rgba(255,255,255,0.65)' text-anchor='middle' dominant-baseline='middle' letter-spacing='1'>${label}</text>
+    </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+  document.querySelectorAll('img[data-ph]').forEach(img=>{
+    if (img.getAttribute('src')) return; // real image already set, skip placeholder
+    const w = img.closest('.slide-right') ? 1200 : 800;
+    const h = img.closest('.slide-right') ? 1400 : 800;
+    img.src = ph(img.dataset.ph, w, h, +img.dataset.hue || 16);
+  });
+
+  /* ---------- Hero slider ---------- */
+  const slides = document.querySelectorAll('.slide');
+  const stripInfo = document.querySelector('.slide-strip .info');
+  let current = 0, timer;
+
+  function goTo(i){
+    slides[current].classList.remove('active');
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    const strip = slides[current].querySelector('.slide-strip');
+    document.querySelectorAll('.slide-counter .track').forEach(t=>{
+      t.style.setProperty('--pos', current);
+    });
+    resetTimer();
+  }
+  function resetTimer(){ clearInterval(timer); timer = setInterval(()=>goTo(current+1), 5500); }
+
+  document.getElementById('nextSlide').onclick = ()=>goTo(current+1);
+  document.getElementById('prevSlide').onclick = ()=>goTo(current-1);
+  resetTimer();
+
+  /* ---------- Listings data ---------- */
+  const listings = [
+    {tag:"For Sale", type:"Villa", price:"$998,500", title:"The Lagonia Residence", loc:"Lekki Phase 1, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos", beds:4, baths:3, sqft:"3,200", description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/luxury-duplex.jpg","images/interior-design.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+    {tag:"For Sale", type:"Penthouse", price:"$657,000", title:"Glass Blue House", loc:"Victoria Island, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos", beds:3, baths:2, sqft:"2,100",description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/swimming-pool.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+    {tag:"New Build", type:"Apartment", price:"$412,000", title:"Marbella Court", loc:"Ikoyi, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos", beds:2, baths:2, sqft:"1,450",description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+    {tag:"For Sale", type:"Villa", price:"$1,240,000", title:"Banana Grove Estate", loc:"Banana Island, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos", beds:5, baths:5, sqft:"4,800",description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+    {tag:"For Rent", type:"Apartment", price:"$3,200/mo", title:"Harbour View Suites", loc:"Victoria Island, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos",beds:2, baths:1, sqft:"1,100",description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+    {tag:"For Sale", type:"Townhouse", price:"$540,000", title:"Cedarwood Row", loc:"Lekki County, Lagos", map:"https://maps.google.com/?q=Lekki+Phase+1+Lagos",beds:3, baths:3, sqft:"1,980",description:"A luxurious modern villa located in Lekki Phase 1 with premium finishes and spacious living areas.", images:["images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg","images/luxury-duplex.jpg"],},
+  ];
+  let currentImages = [];
+  let currentImageIndex = 0;
+  
+  function showCurrentImage() {
+    console.log(currentImageIndex);
+    console.log(currentImages);
+    document.getElementById("modalImage").src = currentImages[currentImageIndex];
+  }
+
+
+  
+  
+  function displayProperties(properties){
+  document.getElementById('propertyGrid').innerHTML = properties.map((p,i)=>`
+
+
+
+    <div class="property-card reveal"
+       style="--i:${i}"
+       data-title="${p.title.toLowerCase()}"
+       data-location="${p.loc.toLowerCase()}"
+       data-type="${p.type.toLowerCase()}">
+      <div class="property-image"><img src="${p.images[0]}" alt="${p.title}"><span class="property-tag">${p.tag}</span><span class="property-fav">♡</span></div>
+      <div class="property-strip"><span class="amt">${p.price}</span><span class="type">${p.type}</span></div>
+      <div class="property-body">
+        <h3>${p.title}</h3><div class="loc">📍 ${p.loc}</div>
+        <div class="specs"><span>${p.beds} bed</span><span>${p.baths} bath</span><span>${p.sqft} sqft</span></div>
+      </div>
+      <button class="view-property" data-id="${i}">
+        View Details
+      </button>
+    </div>
+  `).join('');
+  
+  }
+
+  
+  displayProperties(listings);
+  
+
+
+  const hoods = [
+    {n:"Victoria Island", c:"86 listings", img:ph("Victoria Island",600,800,205)},
+    {n:"Lekki", c:"124 listings", img:ph("Lekki",600,800,25)},
+    {n:"Ikoyi", c:"57 listings", img:ph("Ikoyi",600,800,150)},
+    {n:"Banana Island", c:"31 listings", img:ph("Banana Island",600,800,40)},
+  ];
+  document.getElementById('hoodGrid').innerHTML = hoods.map((h,i)=>`
+    <div class="hood-card reveal" style="--i:${i}"><img src="${h.img}" alt="${h.n}"><div class="label"><div class="n">${h.n}</div><div class="c">${h.c}</div></div></div>
+  `).join('');
+
+  const agents = [
+    {name:"Adaeze Nwosu", role:"Senior Agent", area:"Victoria Island & Ikoyi", img:ph("Adaeze",600,750,16)},
+    {name:"Chidi Okafor", role:"Listings Agent", area:"Lekki & Ajah", img:ph("Chidi",600,750,25)},
+    {name:"Ifeoma Bello", role:"New Developments", area:"Banana Island", img:ph("Ifeoma",600,750,150)},
+  ];
+  document.getElementById('agentGrid').innerHTML = agents.map((a,i)=>`
+    <div class="agent-card reveal" style="--i:${i}">
+      <div class="agent-photo"><img src="${a.img}" alt="${a.name}"></div>
+      <h3>${a.name}</h3><div class="role">${a.role}</div><div class="area">${a.area}</div>
+    </div>
+  `).join('');
+
+  /* ---------- Scroll reveal ---------- */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal, .stagger').forEach(el=>io.observe(el));
+const nextBtn = document.getElementById("nextImage");
+const prevBtn = document.getElementById("prevImage");
+
+if (nextBtn && prevBtn) {
+
+    nextBtn.addEventListener("click", () => {
+        console.log("Next clicked");
+
+        if (currentImages.length <= 1) return;
+
+        currentImageIndex++;
+
+        if (currentImageIndex >= currentImages.length) {
+            currentImageIndex = 0;
+        }
+
+        showCurrentImage();
+    });
+
+    prevBtn.addEventListener("click", () => {
+
+        if (currentImages.length <= 1) return;
+
+        currentImageIndex--;
+
+        if (currentImageIndex < 0) {
+            currentImageIndex = currentImages.length - 1;
+        }
+
+        showCurrentImage();
+    });
+
+}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const statsSection = document.querySelector(".stats");
+    const numElements = document.querySelectorAll(".stats-grid .num");
+    let animated = false;
+
+    function animateCounters() {
+      numElements.forEach((el) => {
+        const fullText = el.innerText.trim();
+
+        // Check if string contains a fraction pattern like 4.9/5
+        if (fullText.includes("/")) {
+          const parts = fullText.split("/");
+          const target = parseFloat(parts[0]);
+          const denominator = parts[1]; // e.g., "5"
+
+          let current = 0;
+          const duration = 2000;
+          const stepTime = 20;
+          const steps = duration / stepTime;
+          const increment = target / steps;
+
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            el.innerText = current.toFixed(1) + "/" + denominator;
+          }, stepTime);
+          return;
+        }
+
+        // Standard counter logic for 1,240+, 18, 14 days, etc.
+        const target = parseFloat(fullText.replace(/,/g, ""));
+        const suffix = fullText.replace(/[\d,.]/g, "");
+
+        if (isNaN(target)) return;
+
+        let current = 0;
+        const duration = 2000;
+        const stepTime = 20;
+        const steps = duration / stepTime;
+        const increment = target / steps;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          el.innerText = Math.floor(current).toLocaleString() + suffix;
+        }, stepTime);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !animated) {
+          animated = true;
+          animateCounters();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    if (statsSection) {
+      observer.observe(statsSection);
+    }
+  });
+  
+
+</script>
+<script src="script.js" defer></script>
+<a
+    href="https://wa.me/2348012345678"
+    class="whatsapp-float"
+    target="_blank"
+>
+    <img src="images/whatsapp.png" alt="WhatsApp">
+</a>
+<div id="propertyModal" class="property-modal">
+
+  <div class="property-modal-content">
+
+    <span class="close-property">&times;</span>
+
+    <h2 id="modalTitle">Luxury Duplex</h2>
+    <p id="modalLocation"></p>
+    <p id="modalPrice"></p>
+    <p id="modalSqft"></p>
+    <p id="modalDescription"></p>
+    <a id="mapButton"
+      href="#"
+      target="_blank"
+      class="map-btn">
+      📍 View on Google Maps
+    </a>
+   <div class="property-gallery">
+      <div class="main-image">
+        <img id="modalImage" src="images/luxury-duplex.jpg" alt="Property">
+      </div>
+      <div id="thumbnailGallery" class="gallery-thumbnails"></div>
+   </div> 
+
+    
+
+    <h3 class="inspection-title">Schedule an Inspection</h3>
+<p class="inspection-subtitle">
+Choose your preferred date and time and we'll confirm your visit.
+</p>
+   <div id="inspectionForm">
+
+<input
+type="text"
+id="clientName"
+placeholder="Full Name"
+required>
+
+<input
+type="tel"
+id="clientPhone"
+placeholder="Phone Number"
+required>
+
+<input
+type="email"
+id="clientEmail"
+placeholder="Email Address">
+
+<input
+type="date"
+id="inspectionDate"
+required>
+
+<input
+type="time"
+id="inspectionTime"
+required>
+
+<textarea
+id="clientMessage"
+placeholder="Additional Message"></textarea>
+
+<button id="bookInspectionBtn">
+Book Inspection
+</button>
+
+</div>
+
+</div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
