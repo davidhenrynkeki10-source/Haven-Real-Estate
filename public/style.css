@@ -989,6 +989,18 @@
 ========================= */
 
 @media (max-width: 768px) {
+    body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    main,
+    section,
+    header,
+    footer {
+        width: 100%;
+        max-width: 100%;
+    }
     .project-card .project-overlay{
         opacity: 1;
         visibility: visible;
@@ -1326,4 +1338,18 @@ nav{
         text-align: center;
         box-sizing: border-box;
     }
+}
+html,
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
 }
